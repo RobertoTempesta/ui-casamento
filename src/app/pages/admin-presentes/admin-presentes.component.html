@@ -1,0 +1,73 @@
+<div class="container">
+  <h1 class="page-title">Cadastrar presentes</h1>
+  <div class="section-divider"></div>
+
+  <a routerLink="/presentes" class="back-link">← Voltar para lista</a>
+
+  @if (erro) {
+    <div class="alert alert-error">{{ erro }}</div>
+  }
+
+  <section class="card form-card">
+    <h2>Novo presente</h2>
+    <form (ngSubmit)="cadastrar()" class="form">
+      <div class="form-group">
+        <label for="nome">Nome *</label>
+        <input id="nome" type="text" [(ngModel)]="novoPresente.nome" name="nome" placeholder="Ex: Jogo de toalhas" required />
+      </div>
+      <div class="form-group">
+        <label for="descricao">Descrição</label>
+        <input id="descricao" type="text" [(ngModel)]="novoPresente.descricao" name="descricao" placeholder="Detalhes opcionais" />
+      </div>
+      <div class="form-group">
+        <label for="valor">Valor (R$)</label>
+        <input id="valor" type="number" [(ngModel)]="novoPresente.valor" name="valor" placeholder="0" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label for="url">Link da loja</label>
+        <input id="url" type="url" [(ngModel)]="novoPresente.url" name="url" placeholder="https://..." />
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="!novoPresente.nome.trim() || salvando">
+        {{ salvando ? 'Cadastrando...' : 'Cadastrar' }}
+      </button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Presentes cadastrados</h2>
+    @if (carregando) {
+      <p>Carregando...</p>
+    } @else if (presentes.length === 0) {
+      <p>Nenhum presente cadastrado.</p>
+    } @else {
+      <ul class="admin-list">
+        @for (p of presentes; track p.id) {
+          <li class="admin-item">
+            <div class="admin-item-info">
+              <strong>{{ p.nome }}</strong>
+              @if (p.valor != null) {
+                <span class="valor">{{ formatarValor(p.valor) }}</span>
+              }
+              @if (p.reservado) {
+                <span class="badge reservado">Reservado por {{ p.reservadoPor }}</span>
+              }
+            </div>
+            <div class="admin-item-actions">
+              @if (p.reservado) {
+                <button type="button" class="btn btn-small" (click)="cancelarReserva(p)">Cancelar reserva</button>
+              }
+              <button
+                type="button"
+                class="btn btn-small btn-danger"
+                (click)="excluir(p)"
+                [disabled]="excluindoId === p.id"
+              >
+                {{ excluindoId === p.id ? 'Excluindo...' : 'Excluir' }}
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>

@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Lista de presentes: leitura pública, escrita apenas para reservar
+    match /presentes/{presenteId} {
+      // Qualquer um pode ler
+      allow read: if true;
+      // Qualquer um pode criar (admin cadastra) - em produção, restringir com auth
+      allow create: if true;
+      // Qualquer um pode atualizar (para reservar) - transação garante que não reserve já reservado
+      // Em produção, use: allow update: if request.auth != null;
+      allow update: if true;
+      // Qualquer um pode excluir - em produção, restringir a admin
+      allow delete: if true;
+    }
+  }
+}

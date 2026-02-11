@@ -1,0 +1,80 @@
+<div class="container">
+  <h1 class="page-title">Lista de presentes</h1>
+  <div class="section-divider"></div>
+
+  <p class="intro-text">Sua presença é o nosso maior presente. Se desejar nos presentear, confira abaixo algumas sugestões.</p>
+
+  <p class="admin-link">
+    <a routerLink="/presentes/admin">Cadastrar presentes (admin)</a>
+  </p>
+
+  @if (erro) {
+    <div class="alert alert-error">{{ erro }}</div>
+  }
+
+  @if (carregando) {
+    <p class="loading">Carregando lista de presentes...</p>
+  } @else if (presentes.length === 0) {
+    <section class="card">
+      <p>Nenhum presente cadastrado ainda. Em breve a lista estará disponível.</p>
+    </section>
+  } @else {
+    <div class="presentes-grid">
+      @for (p of presentes; track p.id) {
+        <div class="card presente-card" [class.reservado]="p.reservado">
+          <h3>{{ p.nome }}</h3>
+          @if (p.descricao) {
+            <p class="descricao">{{ p.descricao }}</p>
+          }
+          @if (p.valor != null) {
+            <p class="valor">{{ formatarValor(p.valor) }}</p>
+          }
+          @if (p.reservado) {
+            <span class="badge reservado">Reservado</span>
+          } @else {
+            @if (p.url) {
+              <a [href]="p.url" target="_blank" rel="noopener noreferrer" class="btn-link">Ver na loja →</a>
+            }
+            <button type="button" class="btn btn-primary btn-reservar" (click)="abrirModalReserva(p)">
+              Reservar
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <section class="card presente-card pix-card">
+    <h2>Pix / transferência</h2>
+    <p>Também aceitamos contribuições via PIX para nossa lua de mel.</p>
+    <p class="pix-info">Chave: email&#64;exemplo.com</p>
+  </section>
+</div>
+
+@if (modalReserva && presenteSelecionado) {
+  <div class="modal-overlay" (click)="fecharModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Reservar presente</h3>
+      <p class="modal-presente">{{ presenteSelecionado.nome }}</p>
+      <label for="nomeReserva">Seu nome *</label>
+      <input
+        id="nomeReserva"
+        type="text"
+        [(ngModel)]="nomeReserva"
+        placeholder="Nome completo"
+        (keydown.enter)="reservar()"
+      />
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="fecharModal()">Cancelar</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="reservar()"
+          [disabled]="!nomeReserva.trim() || reservandoId !== null"
+        >
+          {{ reservandoId ? 'Reservando...' : 'Confirmar reserva' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

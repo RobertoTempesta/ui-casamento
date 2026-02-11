@@ -1,0 +1,3 @@
+# Bloquear indexação (privacidade para fotos)
+User-agent: *
+Disallow: /

@@ -1,0 +1,26 @@
+<div class="app-layout">
+  <header class="header">
+    <div class="container">
+      <h1 class="monogram">J & R</h1>
+      <nav class="nav" role="navigation" aria-label="Menu principal">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Início</a>
+        <a routerLink="/cerimonia" routerLinkActive="active">Cerimônia</a>
+        <a routerLink="/presentes" routerLinkActive="active">Presentes</a>
+        <a routerLink="/fotos" routerLinkActive="active">Fotos</a>
+        <a routerLink="/rsvp" routerLinkActive="active">RSVP</a>
+        <a routerLink="/faq" routerLinkActive="active">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="section-divider"></div>
+      <p class="footer-text">Jessica & Roberto — 2026</p>
+    </div>
+  </footer>
+</div>

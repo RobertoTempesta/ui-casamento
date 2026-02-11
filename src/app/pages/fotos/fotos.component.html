@@ -1,0 +1,16 @@
+<div class="container">
+  <h1 class="page-title">Galeria de fotos</h1>
+  <div class="section-divider"></div>
+
+  <p class="intro-text">Em breve, nossas fotos do casamento.</p>
+
+  <div class="gallery">
+    @for (foto of fotos; track foto.src) {
+      <figure class="gallery-item">
+        <img [src]="foto.src" [alt]="foto.alt" loading="lazy" width="600" height="400" />
+      </figure>
+    }
+  </div>
+
+  <p class="placeholder-note">* Substitua por imagens reais em assets ou integre Firebase/Supabase Storage.</p>
+</div>

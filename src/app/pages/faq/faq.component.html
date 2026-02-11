@@ -1,0 +1,13 @@
+<div class="container">
+  <h1 class="page-title">Perguntas frequentes</h1>
+  <div class="section-divider"></div>
+
+  <div class="faq-list">
+    @for (faq of faqs; track faq.pergunta) {
+      <details class="faq-item">
+        <summary class="faq-pergunta">{{ faq.pergunta }}</summary>
+        <p class="faq-resposta">{{ faq.resposta }}</p>
+      </details>
+    }
+  </div>
+</div>

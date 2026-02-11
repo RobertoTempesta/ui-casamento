@@ -1,0 +1,60 @@
+<div class="container">
+  <h1 class="page-title">Confirmar presença</h1>
+  <div class="section-divider"></div>
+
+  @if (enviado) {
+    <section class="card success-card">
+      <h2>Obrigado!</h2>
+      <p>Sua confirmação foi registrada. Esperamos você!</p>
+      <button type="button" class="btn btn-secondary" (click)="novaConfirmacao()">Nova confirmação</button>
+    </section>
+  } @else {
+    <p class="intro-text">Por favor, confirme sua presença até dia 25/04/2026.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="rsvp-form">
+      <div class="form-group">
+        <label for="nome">Nome completo *</label>
+        <input id="nome" type="text" formControlName="nome" class="form-control" placeholder="Seu nome" />
+        @if (form.get('nome')?.invalid && form.get('nome')?.touched) {
+          <span class="error">Campo obrigatório</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail *</label>
+        <input id="email" type="email" formControlName="email" class="form-control" placeholder="seu@email.com" />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <span class="error">E-mail inválido</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Confirma presença? *</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" formControlName="confirmacao" value="sim" />
+            Sim, estarei lá
+          </label>
+          <label class="radio-label">
+            <input type="radio" formControlName="confirmacao" value="nao" />
+            Infelizmente não poderei
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="acompanhantes">Número de acompanhantes</label>
+        <input id="acompanhantes" type="number" formControlName="acompanhantes" class="form-control" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="mensagem">Mensagem (opcional)</label>
+        <textarea id="mensagem" formControlName="mensagem" class="form-control" rows="3" placeholder="Alguma observação?"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Enviar confirmação</button>
+    </form>
+  }
+
+  <p class="disclaimer">* MVP: dados salvos localmente. Integre Firebase/Supabase ou use Google Forms para produção.</p>
+</div>

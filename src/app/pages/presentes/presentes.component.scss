@@ -1,0 +1,150 @@
+.page-title {
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+}
+
+.intro-text {
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+  color: #555;
+}
+
+.admin-link {
+  text-align: center;
+  margin: 0 0 2rem 0;
+  font-size: 0.9rem;
+
+  a {
+    color: #666;
+  }
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.alert-error {
+  background: #fee;
+  color: #c00;
+  border: 1px solid #fcc;
+}
+
+.loading {
+  text-align: center;
+  color: #666;
+}
+
+.presentes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.presente-card {
+  margin-bottom: 0;
+
+  &.reservado {
+    opacity: 0.85;
+    border-color: rgba(184, 134, 11, 0.5);
+  }
+}
+
+.presente-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.descricao {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0 0 0.5rem 0;
+}
+
+.valor {
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+
+  &.reservado {
+    background: rgba(184, 134, 11, 0.2);
+    color: #8b6914;
+  }
+}
+
+.btn-reservar {
+  margin-top: 0.75rem;
+}
+
+.pix-card {
+  margin-top: 1rem;
+}
+
+.pix-info {
+  font-family: monospace;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+  h3 {
+    margin: 0 0 1rem 0;
+  }
+
+  .modal-presente {
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: #b8860b;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    font-size: 1rem;
+    border: 1px solid rgba(184, 134, 11, 0.4);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
