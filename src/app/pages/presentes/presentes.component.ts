@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PresentesService } from '../../services/presentes.service';
@@ -21,6 +21,11 @@ export class PresentesComponent implements OnInit {
   nomeReserva = '';
 
   constructor(private presentesService: PresentesService) {}
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.modalReserva) this.fecharModal();
+  }
 
   ngOnInit(): void {
     this.carregar();

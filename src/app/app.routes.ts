@@ -13,7 +13,7 @@ export const routes: Routes = [
   { path: 'presentes', component: PresentesComponent },
   { path: 'presentes/admin', component: AdminPresentesComponent },
   { path: 'fotos', component: FotosComponent },
-  { path: 'rsvp', component: RsvpComponent },
-  { path: 'faq', component: FaqComponent },
+  // { path: 'rsvp', component: RsvpComponent },
+  // { path: 'faq', component: FaqComponent },
   { path: '**', redirectTo: '' },
 ];

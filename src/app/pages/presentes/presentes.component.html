@@ -4,10 +4,6 @@
 
   <p class="intro-text">Sua presença é o nosso maior presente. Se desejar nos presentear, confira abaixo algumas sugestões.</p>
 
-  <p class="admin-link">
-    <a routerLink="/presentes/admin">Cadastrar presentes (admin)</a>
-  </p>
-
   @if (erro) {
     <div class="alert alert-error">{{ erro }}</div>
   }
@@ -32,9 +28,6 @@
           @if (p.reservado) {
             <span class="badge reservado">Reservado</span>
           } @else {
-            @if (p.url) {
-              <a [href]="p.url" target="_blank" rel="noopener noreferrer" class="btn-link">Ver na loja →</a>
-            }
             <button type="button" class="btn btn-primary btn-reservar" (click)="abrirModalReserva(p)">
               Reservar
             </button>
@@ -52,9 +45,15 @@
 </div>
 
 @if (modalReserva && presenteSelecionado) {
-  <div class="modal-overlay" (click)="fecharModal()">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <h3>Reservar presente</h3>
+  <div class="modal-overlay" (click)="fecharModal()" (keydown.escape)="fecharModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-titulo"
+    >
+      <h3 id="modal-titulo">Reservar presente</h3>
       <p class="modal-presente">{{ presenteSelecionado.nome }}</p>
       <label for="nomeReserva">Seu nome *</label>
       <input

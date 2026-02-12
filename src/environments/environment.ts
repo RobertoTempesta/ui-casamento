@@ -1,6 +1,8 @@
 export const environment = {
   production: false,
-  useEmulator: true, // true = usa Firestore local (emulator)
+  useEmulator: true, // true = tenta emulator; se não estiver rodando, use useLocalStorageForPresentes
+  /** Em dev: true = usa localStorage (não precisa do emulador). false = usa Firestore/emulator. */
+  useLocalStorageForPresentes: true,
   firebase: {
     apiKey: 'demo-key',
     authDomain: 'demo.firebaseapp.com',

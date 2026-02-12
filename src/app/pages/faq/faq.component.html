@@ -3,7 +3,7 @@
   <div class="section-divider"></div>
 
   <div class="faq-list">
-    @for (faq of faqs; track faq.pergunta) {
+    @for (faq of faqs; track $index) {
       <details class="faq-item">
         <summary class="faq-pergunta">{{ faq.pergunta }}</summary>
         <p class="faq-resposta">{{ faq.resposta }}</p>

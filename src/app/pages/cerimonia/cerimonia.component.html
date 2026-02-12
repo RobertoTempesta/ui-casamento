@@ -34,4 +34,71 @@
       <li>Após a cerimônia — Recepção dos cumprimentos na igreja</li>
     </ul>
   </section>
+
+  @if (fotosIgreja.length > 0) {
+    <section class="card carousel-section">
+      <h2>Fotos da igreja</h2>
+      <p class="carousel-intro">Conheça a Paróquia São José, onde será nossa cerimônia.</p>
+
+      <div class="carousel" role="region" aria-label="Carrossel de fotos da igreja">
+        <div class="carousel-track" [style.transform]="'translateX(-' + fotoAtualIndex * 100 + '%)'">
+          @for (foto of fotosIgreja; track $index; let i = $index) {
+            <div class="carousel-slide">
+              <button type="button" class="carousel-slide-btn" (click)="abrirLightbox(i)" [attr.aria-label]="'Ver ' + foto.alt + ' em tamanho real'">
+                <img [src]="foto.src" [alt]="foto.alt" loading="lazy" />
+              </button>
+            </div>
+          }
+        </div>
+
+        @if (fotosIgreja.length > 1) {
+          <button
+            type="button"
+            class="carousel-btn carousel-btn-prev"
+            (click)="fotoAnterior()"
+            aria-label="Foto anterior">
+            ‹
+          </button>
+          <button
+            type="button"
+            class="carousel-btn carousel-btn-next"
+            (click)="proximaFoto()"
+            aria-label="Próxima foto">
+            ›
+          </button>
+
+          <div class="carousel-dots">
+            @for (foto of fotosIgreja; track $index; let i = $index) {
+              <button
+                type="button"
+                class="carousel-dot"
+                [class.active]="i === fotoAtualIndex"
+                (click)="irParaFoto(i)"
+                [attr.aria-label]="'Ir para foto ' + (i + 1)"
+                [attr.aria-current]="i === fotoAtualIndex ? 'true' : null">
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </section>
+  }
 </div>
+
+@if (lightboxAberta && fotosIgreja[fotoLightboxIndex]) {
+  <div
+    class="lightbox-overlay"
+    (click)="fecharLightbox()"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Foto em tamanho real">
+    <button type="button" class="lightbox-close" (click)="fecharLightbox()" aria-label="Fechar">×</button>
+    <div class="lightbox-content" (click)="$event.stopPropagation()">
+      @if (fotosIgreja.length > 1) {
+        <button type="button" class="lightbox-nav lightbox-prev" (click)="lightboxAnterior(); $event.stopPropagation()" aria-label="Foto anterior">‹</button>
+        <button type="button" class="lightbox-nav lightbox-next" (click)="lightboxProxima(); $event.stopPropagation()" aria-label="Próxima foto">›</button>
+      }
+      <img [src]="fotosIgreja[fotoLightboxIndex].src" [alt]="fotosIgreja[fotoLightboxIndex].alt" />
+    </div>
+  </div>
+}

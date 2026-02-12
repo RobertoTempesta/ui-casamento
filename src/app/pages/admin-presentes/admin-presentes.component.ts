@@ -22,8 +22,7 @@ export class AdminPresentesComponent implements OnInit {
   novoPresente = {
     nome: '',
     descricao: '',
-    valor: null as number | null,
-    url: '',
+    valor: null as number | null | string,
   };
 
   constructor(private presentesService: PresentesService) {}
@@ -46,24 +45,33 @@ export class AdminPresentesComponent implements OnInit {
   }
 
   async cadastrar(): Promise<void> {
-    if (!this.novoPresente.nome.trim()) return;
+    const nome = String(this.novoPresente.nome ?? '').trim();
+    if (!nome) return;
+
     this.salvando = true;
     this.erro = null;
     try {
+      const valor = this.coerceValor(this.novoPresente.valor);
       await this.presentesService.cadastrar({
-        nome: this.novoPresente.nome.trim(),
-        descricao: this.novoPresente.descricao.trim() || undefined,
-        valor: this.novoPresente.valor ?? undefined,
-        url: this.novoPresente.url.trim() || undefined,
+        nome,
+        descricao: String(this.novoPresente.descricao ?? '').trim() || undefined,
+        valor,
       });
-      this.novoPresente = { nome: '', descricao: '', valor: null, url: '' };
+      this.novoPresente = { nome: '', descricao: '', valor: null };
       await this.carregar();
     } catch (e) {
-      this.erro = e instanceof Error ? e.message : 'Erro ao cadastrar.';
+      this.erro = e instanceof Error ? e.message : 'Erro ao cadastrar. Verifique se o Firebase está rodando (emulador ou projeto).';
       console.error(e);
     } finally {
       this.salvando = false;
     }
+  }
+
+  /** Converte valor do formulário (pode vir como string do input number) para number ou undefined. */
+  private coerceValor(val: number | null | string | undefined): number | undefined {
+    if (val === null || val === undefined || val === '') return undefined;
+    const n = Number(val);
+    return isNaN(n) || n < 0 ? undefined : n;
   }
 
   async cancelarReserva(p: Presente): Promise<void> {
