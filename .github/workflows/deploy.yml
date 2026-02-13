@@ -1,0 +1,38 @@
+# Deploy do site para Firebase Hosting (build de produção).
+# Configure o secret FIREBASE_TOKEN no repositório (veja README → Deploy pelo GitHub).
+
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  # Altere para o ID do seu projeto no Firebase Console, se for outro.
+  FIREBASE_PROJECT_ID: dbcasamento-8a407
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (production)
+        run: npm run build
+
+      - name: Select Firebase project
+        run: npx firebase-tools use ${{ env.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Deploy to Firebase Hosting
+        run: npx firebase-tools deploy --only hosting --token ${{ secrets.FIREBASE_TOKEN }}

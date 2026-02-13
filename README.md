@@ -184,6 +184,24 @@ O projeto já está configurado para **Firebase Hosting**. No plano gratuito voc
 5. **URL do site**  
    Após o deploy, o Firebase mostra uma URL do tipo `https://SEU-PROJETO.web.app` (e também `https://SEU-PROJETO.firebaseapp.com`). Você pode usar essa URL como base ao gerar os links com token (terceiro argumento do `generate-tokens.js`).
 
+**Deploy pelo GitHub (GitHub Actions)**  
+O repositório inclui um workflow em `.github/workflows/deploy.yml` que faz build e deploy no Firebase Hosting ao dar **push na branch `main`** (ou ao rodar o workflow manualmente em Actions → Deploy to Firebase Hosting → Run workflow).
+
+Para ativar:
+
+1. Gere um token de CI do Firebase (uma vez, no seu computador):
+   ```bash
+   npx firebase-tools login:ci
+   ```
+   Copie o token que aparecer no terminal.
+
+2. No GitHub: repositório → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.  
+   Nome: `FIREBASE_TOKEN` | Valor: o token copiado.
+
+3. Se o projeto Firebase for outro, edite no workflow o valor de `FIREBASE_PROJECT_ID` (em `.github/workflows/deploy.yml`).
+
+Depois disso, cada push em `main` dispara o build de produção e o deploy no Hosting.
+
 **Domínio próprio (opcional):** no Console Firebase → Hosting → “Conectar domínio” você pode apontar um domínio que você já tenha (ex.: `casamento.seudominio.com.br`) para o mesmo site. Continua usando o plano gratuito do Hosting.
 
 **Outras opções gratuitas:**  
