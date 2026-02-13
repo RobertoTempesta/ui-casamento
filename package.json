@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "emulator": "npx firebase-tools emulators:start --only firestore"
+    "emulator": "npx firebase-tools emulators:start --only firestore",
+    "deploy": "ng build --configuration production && npx firebase-tools deploy --only hosting"
   },
   "private": true,
   "dependencies": {

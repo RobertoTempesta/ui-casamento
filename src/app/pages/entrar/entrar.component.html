@@ -1,0 +1,28 @@
+<div class="entrar-page">
+  <div class="entrar-card">
+    <h1 class="entrar-title">Convite</h1>
+    <div class="section-divider"></div>
+    <p class="entrar-texto">
+      Este site é de acesso restrito. Use o <strong>link que enviamos no seu convite</strong> pelo WhatsApp para entrar.
+    </p>
+    <p class="entrar-texto secundario">
+      Se você já tem o link, clique nele. Se recebeu apenas o código, digite abaixo:
+    </p>
+    <form (ngSubmit)="enviar()" class="entrar-form">
+      <label for="codigo" class="sr-only">Código do convite</label>
+      <input
+        id="codigo"
+        type="text"
+        [(ngModel)]="codigo"
+        name="codigo"
+        placeholder="Código do convite"
+        class="entrar-input"
+        autocomplete="off"
+      />
+      @if (erro) {
+        <p class="entrar-erro">{{ erro }}</p>
+      }
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+  </div>
+</div>

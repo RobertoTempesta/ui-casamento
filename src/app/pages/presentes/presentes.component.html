@@ -55,6 +55,11 @@
     >
       <h3 id="modal-titulo">Reservar presente</h3>
       <p class="modal-presente">{{ presenteSelecionado.nome }}</p>
+      <!-- Honeypot: bots costumam preencher; usuários não veem -->
+      <div class="form-hp" aria-hidden="true">
+        <label for="hp_website">Deixe em branco</label>
+        <input id="hp_website" type="text" [(ngModel)]="hpWebsite" name="hp_website" tabindex="-1" autocomplete="off" />
+      </div>
       <label for="nomeReserva">Seu nome *</label>
       <input
         id="nomeReserva"
@@ -63,6 +68,9 @@
         placeholder="Nome completo"
         (keydown.enter)="reservar()"
       />
+      @if (erroReserva) {
+        <p class="modal-erro">{{ erroReserva }}</p>
+      }
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" (click)="fecharModal()">Cancelar</button>
         <button

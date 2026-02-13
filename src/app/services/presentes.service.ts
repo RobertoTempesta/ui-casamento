@@ -18,6 +18,34 @@ import { Presente, PresenteCreate } from '../models/presente.model';
 const COLLECTION = 'presentes';
 const STORAGE_KEY = 'ui-casamento-presentes';
 
+/** Lista inicial de presentes (migração) — com descrição e valor sugerido. */
+interface PresenteInicial {
+  nome: string;
+  descricao?: string;
+  valor?: number;
+}
+
+const PRESENTES_INICIAIS: PresenteInicial[] = [
+  { nome: 'Forno Elétrico', descricao: 'Forno elétrico de embutir ou de mesa, ideal para assar e gratinar.', valor: 450 },
+  { nome: 'Cooktop por indução', descricao: 'Cooktop 4 bocas por indução, vitrocerâmico.', valor: 899 },
+  { nome: 'Jogo de panela por indução Brinox ceramic Vanilla', descricao: 'Jogo de panelas antiaderentes compatível com indução, linha Ceramic Vanilla.', valor: 349 },
+  { nome: 'Bebedouro', descricao: 'Bebedouro elétrico com aquecimento e resfriamento.', valor: 299 },
+  { nome: 'Jogo de talheres', descricao: 'Jogo de talheres em inox (24 peças ou 44 peças).', valor: 189 },
+  { nome: 'Jogo de facas', descricao: 'Jogo de facas de cozinha em aço inox com suporte.', valor: 149 },
+  { nome: 'Jogo de copos', descricao: 'Jogo de copos (água, suco e requeijão) em vidro ou cristal.', valor: 129 },
+  { nome: 'Jogo de potes de vidro', descricao: 'Conjunto de potes herméticos de vidro para armazenar alimentos.', valor: 119 },
+  { nome: 'Aspirador de pó', descricao: 'Aspirador de pó vertical ou canister.', valor: 399 },
+  { nome: 'Jogo de toalhas de banho', descricao: 'Conjunto de toalhas de banho e rosto (frio ou fricção).', valor: 179 },
+  { nome: 'Banquetas de madeira', descricao: 'Par de banquetas altas ou baixas para balcão ou ilha.', valor: 449 },
+  { nome: 'Ferro de passar', descricao: 'Ferro de passar roupa a vapor ou central de vapor.', valor: 199 },
+  { nome: 'Tanquinho', descricao: 'Máquina de lavar roupas semiautomática (tanquinho).', valor: 549 },
+  { nome: 'Panela de pressão', descricao: 'Panela de pressão em inox, 6 ou 8 litros.', valor: 169 },
+  { nome: 'Batedeira', descricao: 'Batedeira planetária ou batedeira de mesa.', valor: 279 },
+  { nome: 'Jogo de assadeiras', descricao: 'Conjunto de assadeiras e formas para forno (vidro ou antiaderente).', valor: 139 },
+  { nome: 'Jogo de jantar', descricao: 'Jogo de jantar (pratos, tigelas e travessas) para 6 ou 12 pessoas.', valor: 399 },
+  { nome: 'Jogo de pratos', descricao: 'Jogo de pratos rasos e fundos em porcelana ou cerâmica.', valor: 249 },
+];
+
 /** Item como salvo no localStorage (reservadoEm em ms). */
 interface PresenteStored {
   id: string;
@@ -63,7 +91,9 @@ export class PresentesService {
     return getFirestoreInstance();
   }
 
+  /** Em produção sempre usa Firestore; em dev usa localStorage só se a flag estiver true. */
   private get useLocal(): boolean {
+    if (environment.production) return false;
     return !!environment.useLocalStorageForPresentes;
   }
 
@@ -76,9 +106,27 @@ export class PresentesService {
       return Promise.resolve(this.listarLocal());
     }
     const snapshot = await getDocs(collection(this.db, COLLECTION));
+    if (snapshot.empty) {
+      await this.executarMigracaoInicialFirestore();
+      const novoSnapshot = await getDocs(collection(this.db, COLLECTION));
+      return novoSnapshot.docs
+        .map(docToPresente)
+        .sort((a, b) => a.nome.localeCompare(b.nome));
+    }
     return snapshot.docs
       .map(docToPresente)
       .sort((a, b) => a.nome.localeCompare(b.nome));
+  }
+
+  /** Insere os presentes iniciais no Firestore (executado uma vez quando a coleção está vazia). */
+  private async executarMigracaoInicialFirestore(): Promise<void> {
+    const col = collection(this.db, COLLECTION);
+    for (const p of PRESENTES_INICIAIS) {
+      const data: Record<string, unknown> = { nome: p.nome, reservado: false };
+      if (p.descricao) data['descricao'] = p.descricao;
+      if (p.valor != null) data['valor'] = p.valor;
+      await addDoc(col, data);
+    }
   }
 
   private getListRaw(): PresenteStored[] {
@@ -91,9 +139,26 @@ export class PresentesService {
   }
 
   private listarLocal(): Presente[] {
-    return this.getListRaw()
+    let list = this.getListRaw();
+    if (list.length === 0) {
+      this.executarMigracaoInicial();
+      list = this.getListRaw();
+    }
+    return list
       .map(storedToPresente)
       .sort((a, b) => a.nome.localeCompare(b.nome));
+  }
+
+  /** Preenche a lista com os presentes iniciais (executado uma vez quando a lista está vazia). */
+  private executarMigracaoInicial(): void {
+    const list: PresenteStored[] = PRESENTES_INICIAIS.map((p, index) => ({
+      id: `migracao-${Date.now()}-${index}`,
+      nome: p.nome,
+      descricao: p.descricao,
+      valor: p.valor,
+      reservado: false,
+    }));
+    this.salvarLocal(list);
   }
 
   private salvarLocal(list: PresenteStored[]): void {
