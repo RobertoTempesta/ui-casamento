@@ -12,7 +12,7 @@ export class CerimoniaComponent {
   readonly mapSrc: SafeResourceUrl;
 
   constructor(sanitizer: DomSanitizer) {
-    const mapUrl = 'https://maps.google.com/maps?q=-22.9104048,-49.6343965&z=17&t=s&output=embed';
+    const mapUrl = 'https://maps.google.com/maps?q=-22.9104048,-49.6343965&z=17&t=k&output=embed';
     this.mapSrc = sanitizer.bypassSecurityTrustResourceUrl(mapUrl);
   }
 }

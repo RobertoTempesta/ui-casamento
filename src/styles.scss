@@ -1,3 +1,6 @@
+/* Bootstrap (botões e utilitários) */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
 /* ============================================
    Design System — Tema Clássico (Casamento)
    ============================================ */
@@ -105,4 +108,58 @@ img {
   border-radius: $radius-sm;
   padding: $spacing-lg;
   margin-bottom: $spacing-md;
+}
+
+/* Botões Bootstrap — identidade do site (dourado / grafite) */
+.btn {
+  font-family: $font-body;
+  font-weight: 500;
+  border-radius: $radius-sm;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-primary {
+  background-color: $color-gold;
+  border-color: $color-gold;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background-color: $color-gold-light;
+    border-color: $color-gold-light;
+    color: #fff;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 0.2rem rgba(184, 134, 11, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+  }
+}
+
+.btn-secondary,
+.btn-outline-secondary {
+  color: $color-graphite;
+  border-color: $color-gold-muted;
+  background-color: transparent;
+
+  &:hover:not(:disabled) {
+    color: $color-soft-black;
+    background-color: rgba(184, 134, 11, 0.08);
+    border-color: $color-gold-light;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 0.2rem rgba(184, 134, 11, 0.25);
+  }
+}
+
+.btn-secondary {
+  background-color: $color-off-white;
+  border-color: $color-gold-muted;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(184, 134, 11, 0.12);
+  }
 }

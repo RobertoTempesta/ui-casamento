@@ -28,7 +28,7 @@
           @if (p.reservado) {
             <span class="badge reservado">Reservado</span>
           } @else {
-            <button type="button" class="btn btn-primary btn-reservar" (click)="abrirModalReserva(p)">
+            <button type="button" class="btn btn-primary mt-2" (click)="abrirModalReserva(p)">
               Reservar
             </button>
           }
@@ -38,9 +38,9 @@
   }
 
   <section class="card presente-card pix-card">
-    <h2>Pix / transferência</h2>
+    <h2>Pix </h2>
     <p>Também aceitamos contribuições via PIX para nossa lua de mel.</p>
-    <p class="pix-info">Chave: email&#64;exemplo.com</p>
+    <p class="pix-info">Chave: (14) 9 9108-5933</p>
   </section>
 </div>
 
@@ -72,7 +72,7 @@
         <p class="modal-erro">{{ erroReserva }}</p>
       }
       <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" (click)="fecharModal()">Cancelar</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="fecharModal()">Cancelar</button>
         <button
           type="button"
           class="btn btn-primary"
