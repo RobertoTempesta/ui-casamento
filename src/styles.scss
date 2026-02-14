@@ -134,7 +134,10 @@ img {
   }
 
   &:disabled {
-    opacity: 0.7;
+    background-color: $color-gold;
+    border-color: $color-gold;
+    color: #fff;
+    opacity: 0.6;
   }
 }
 

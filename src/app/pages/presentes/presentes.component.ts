@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PresentesService } from '../../services/presentes.service';
@@ -29,7 +29,10 @@ export class PresentesComponent implements OnInit {
   /** Intervalo mínimo entre reservas (ms) para o mesmo navegador. */
   private static readonly COOLDOWN_MS = 60_000;
 
-  constructor(private presentesService: PresentesService) {}
+  constructor(
+    private presentesService: PresentesService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
@@ -60,6 +63,7 @@ export class PresentesComponent implements OnInit {
     this.hpWebsite = '';
     this.erroReserva = null;
     this.modalReserva = true;
+    this.cdr.detectChanges();
   }
 
   fecharModal(): void {
