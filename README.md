@@ -137,7 +137,7 @@ Para desenvolver sem usar o Firebase em produção:
 
 ### Firebase — produção
 
-Guia completo: **[docs/FIREBASE-PRODUCAO.md](docs/FIREBASE-PRODUCAO.md)** (criar projeto, ativar Firestore, copiar config, preencher `environment.prod.ts`, deploy).
+Guia completo: **[docs/FIREBASE-PRODUCAO.md](docs/FIREBASE-PRODUCAO.md)** (criar projeto, ativar Firestore, copiar config, preencher `environment.prod.ts`, deploy). **Chave de conta de serviço** (para rodar `npm run seed-firestore` em prod): ver seção 8 do mesmo doc — coloque o JSON em `scripts/credentials/service-account.json` e defina `GOOGLE_APPLICATION_CREDENTIALS`.
 
 Resumo:
 1. Crie um projeto em [Firebase Console](https://console.firebase.google.com)
@@ -168,7 +168,7 @@ O projeto já está configurado para **Firebase Hosting**. No plano gratuito voc
    Escolha o projeto e defina como padrão.
 
 3. **Configure produção**  
-   - Em `src/environments/environment.prod.ts`: coloque as credenciais do Firebase e a lista de `validTokens`.  
+   - Em `src/environments/environment.prod.ts`: coloque as credenciais do Firebase. Os tokens de convite vêm do Firestore (collection `tokens`); use `npm run seed-firestore` para popular.  
    - Se quiser usar Firestore em produção, deixe `useLocalStorageForPresentes: false`; senão o site usa só localStorage (dados por navegador).
 
 4. **Build e deploy**  
@@ -232,18 +232,18 @@ node scripts/generate-tokens.js 50
 node scripts/generate-tokens.js 30 2026-06-09
 node scripts/generate-tokens.js 10 2027-01-01 https://meucasamento.com.br
 ```
-O script imprime: (1) os tokens; (2) **os links prontos (URL + token)** para enviar; (3) o array JSON para colar em `validTokens` no `environment.prod.ts`.
+O script imprime: (1) os tokens; (2) **os links prontos (URL + token)** para enviar. Para usar no site, adicione os tokens ao Firestore com `npm run seed-firestore tokens` (ou gere e popule a collection `tokens` manualmente).
 
 **Fluxo:**
 
 1. Rode o script com a URL do seu site e copie a seção **"Links para enviar"**.
-2. Em **produção**, edite `src/environments/environment.prod.ts` e cole o array em `validTokens`.
+2. Popule a collection **`tokens`** no Firestore (ex.: `npm run seed-firestore tokens -- --quantidade=50 --expira=2026-06-09`).
 3. Envie um link por WhatsApp para cada convidado (cada linha da seção é um link completo).
 4. No **primeiro acesso**, a pessoa abre o link → o app valida o token, grava em **cookie e memória** (sessionStorage) e **redireciona para a home sem o token na URL** (o endereço fica limpo). Nos acessos seguintes, o token já está no navegador e ela entra direto sem precisar do link de novo (até expirar ou limpar dados do site).
 
-**Tokens sem expiração:** se você colocar em `validTokens` um valor **sem ponto** (ex.: `convite-dev`), esse token não expira e vale para sempre.
+**Tokens sem expiração:** na collection `tokens` do Firestore, documentos sem o campo `expiraEm` (ou com valor muito futuro) não expiram.
 
-**Em desenvolvimento:** o token `convite-dev` está em `environment.ts`; use `http://localhost:4200/?token=convite-dev` para testar.
+**Em desenvolvimento:** use o emulador do Firestore e popule a collection `tokens` com `npm run seed-firestore tokens`; use um dos links gerados ou o token na URL para testar.
 
 **Persistência:** o token é salvo em **sessionStorage** e em **cookie** (path=/, SameSite=Lax). O cookie usa a data de expiração do token quando existir, ou 90 dias para tokens sem expiração. Assim o convidado pode fechar o navegador e voltar depois sem precisar do link de novo.
 

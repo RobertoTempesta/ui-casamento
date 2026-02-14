@@ -56,13 +56,29 @@ export class PresentesComponent implements OnInit {
     }
   }
 
-  abrirModalReserva(presente: Presente): void {
+  async abrirModalReserva(presente: Presente): Promise<void> {
     if (presente.reservado) return;
-    this.presenteSelecionado = presente;
-    this.nomeReserva = '';
-    this.hpWebsite = '';
-    this.erroReserva = null;
-    this.modalReserva = true;
+    try {
+      const atual = await this.presentesService.obterPorId(presente.id);
+      if (!atual) {
+        this.erro = 'Presente não encontrado.';
+        await this.carregar();
+        return;
+      }
+      if (atual.reservado) {
+        this.erro = 'Este presente já foi reservado por outra pessoa. Lista atualizada.';
+        await this.carregar();
+        this.cdr.detectChanges();
+        return;
+      }
+      this.presenteSelecionado = atual;
+      this.nomeReserva = '';
+      this.hpWebsite = '';
+      this.erroReserva = null;
+      this.modalReserva = true;
+    } catch {
+      this.erro = 'Não foi possível verificar o presente. Tente novamente.';
+    }
     this.cdr.detectChanges();
   }
 
@@ -99,6 +115,25 @@ export class PresentesComponent implements OnInit {
     );
     if (jaReservados.length >= PresentesComponent.MAX_RESERVAS_POR_NOME) {
       this.erroReserva = `Cada pessoa pode reservar no máximo ${PresentesComponent.MAX_RESERVAS_POR_NOME} presentes. Você já reservou ${jaReservados.length}.`;
+      return;
+    }
+
+    // Consultar no banco se ainda não foi reservado antes de enviar
+    try {
+      const atual = await this.presentesService.obterPorId(this.presenteSelecionado.id);
+      if (!atual) {
+        this.erroReserva = 'Presente não encontrado. Atualize a página.';
+        return;
+      }
+      if (atual.reservado) {
+        this.erroReserva = 'Este presente já foi reservado por outra pessoa. Fechando…';
+        this.cdr.detectChanges();
+        await this.carregar();
+        this.fecharModal();
+        return;
+      }
+    } catch {
+      this.erroReserva = 'Não foi possível verificar. Tente novamente.';
       return;
     }
 

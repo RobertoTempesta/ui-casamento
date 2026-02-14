@@ -1,6 +1,11 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Tokens de convite: só leitura (validação no app); criação/atualização via script ou Admin SDK
+    match /tokens/{tokenId} {
+      allow read: if true;
+      allow write: if false;
+    }
     // Lista de presentes: leitura pública, escrita apenas para reservar
     match /presentes/{presenteId} {
       // Qualquer um pode ler

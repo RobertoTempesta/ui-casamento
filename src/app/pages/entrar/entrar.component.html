@@ -22,7 +22,7 @@
       @if (erro) {
         <p class="entrar-erro">{{ erro }}</p>
       }
-      <button type="submit" class="btn btn-primary">Entrar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="enviando">Entrar</button>
     </form>
   </div>
 </div>

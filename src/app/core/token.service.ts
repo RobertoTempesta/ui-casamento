@@ -1,43 +1,56 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { getFirestoreInstance } from './firebase.config';
 
 const STORAGE_KEY = 'convite_token';
 const COOKIE_NAME = 'convite_token';
 const COOKIE_MAX_AGE_DAYS = 90;
+const TOKENS_COLLECTION = 'tokens';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
-  private readonly validSet: Set<string>;
-
-  constructor() {
-    const list = environment.validTokens ?? [];
-    this.validSet = new Set(list.map((t) => t.trim()));
+  /**
+   * Verifica se o token armazenado ainda está dentro do prazo (expiração no formato id.exp).
+   */
+  private isStoredTokenNotExpired(token: string): boolean {
+    const t = token?.trim();
+    if (!t) return false;
+    if (!t.includes('.')) return true; // sem expiração
+    const parts = t.split('.');
+    const exp = parseInt(parts[parts.length - 1], 10);
+    if (isNaN(exp)) return true;
+    return Math.floor(Date.now() / 1000) < exp;
   }
 
   /**
-   * Valida o token: deve estar na lista e, se tiver expiração (formato id.exp), a data deve ser futura.
-   * Tokens sem ponto (ex.: convite-dev) não expiram.
+   * Valida o token no Firestore: existe na collection `tokens` e não está expirado (expiraEm).
    */
-  isValid(token: string): boolean {
+  async isValidAsync(token: string): Promise<boolean> {
     const t = token?.trim();
     if (!t) return false;
 
-    const hasExp = t.includes('.');
-    if (hasExp) {
-      if (!this.validSet.has(t)) return false;
-      const parts = t.split('.');
-      const expStr = parts[parts.length - 1];
-      const exp = parseInt(expStr, 10);
-      if (isNaN(exp)) return false;
-      return Math.floor(Date.now() / 1000) < exp;
+    try {
+      const db = getFirestoreInstance();
+      const col = collection(db, TOKENS_COLLECTION);
+      const q = query(col, where('token', '==', t));
+      const snapshot = await getDocs(q);
+      if (!snapshot.empty) {
+        const doc = snapshot.docs[0].data();
+        const expiraEm = doc['expiraEm'];
+        if (expiraEm != null && typeof expiraEm === 'number') {
+          if (Math.floor(Date.now() / 1000) >= expiraEm) return false;
+        }
+        return true;
+      }
+    } catch {
+      // Firestore indisponível ou erro de rede
     }
-
-    return Array.from(this.validSet).some((k) => k.toLowerCase() === t.toLowerCase());
+    return false;
   }
 
   hasValidToken(): boolean {
     const stored = this.getStored();
-    return stored !== null && this.isValid(stored);
+    return stored !== null && this.isStoredTokenNotExpired(stored);
   }
 
   setToken(token: string): void {

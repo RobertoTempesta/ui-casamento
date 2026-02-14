@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "emulator": "npx firebase-tools emulators:start --only firestore",
-    "deploy": "ng build --configuration production && npx firebase-tools deploy --only hosting"
+    "deploy": "ng build --configuration production && npx firebase-tools deploy --only hosting",
+    "seed-firestore": "node scripts/seed-firestore.js"
   },
   "private": true,
   "dependencies": {
@@ -30,6 +31,7 @@
     "@angular/cli": "^19.0.0",
     "@angular/compiler-cli": "^19.0.0",
     "@types/node": "^22.0.0",
+    "firebase-admin": "^13.6.1",
     "firebase-tools": "^13.0.0",
     "typescript": "~5.6.0"
   }

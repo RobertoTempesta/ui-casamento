@@ -43,5 +43,4 @@ tokens.forEach((t, i) => {
   console.log(`${baseUrl}/?token=${t}`);
 });
 
-console.log('\n# Cole no environment.prod.ts em validTokens:\n');
-console.log(JSON.stringify(tokens, null, 2));
+console.log('\n# Para usar no site: adicione ao Firestore com npm run seed-firestore tokens (ou use a lista acima para popular a collection "tokens").\n');

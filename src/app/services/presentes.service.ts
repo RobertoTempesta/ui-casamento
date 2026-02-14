@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   addDoc,
   updateDoc,
@@ -99,6 +100,22 @@ export class PresentesService {
 
   getCollectionRef() {
     return this.useLocal ? null : collection(this.db, COLLECTION);
+  }
+
+  /**
+   * Busca um presente pelo id no banco (Firestore ou localStorage).
+   * Útil para conferir se ainda não foi reservado antes de abrir o modal.
+   */
+  async obterPorId(id: string): Promise<Presente | null> {
+    if (this.useLocal) {
+      const list = this.getListRaw();
+      const item = list.find((p) => p.id === id);
+      return item ? storedToPresente(item) : null;
+    }
+    const docRef = doc(this.db, COLLECTION, id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return null;
+    return docToPresente(docSnap as QueryDocumentSnapshot<DocumentData>);
   }
 
   async listar(): Promise<Presente[]> {

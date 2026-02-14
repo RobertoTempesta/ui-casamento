@@ -20,3 +20,8 @@ Thumbs.db
 # Env
 .env
 .env.local
+
+# Firebase service account (nunca commitar)
+*-firebase-adminsdk-*.json
+service-account*.json
+credentials*.json
