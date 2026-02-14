@@ -126,10 +126,9 @@ export class PresentesComponent implements OnInit {
         return;
       }
       if (atual.reservado) {
-        this.erroReserva = 'Este presente já foi reservado por outra pessoa. Fechando…';
-        this.cdr.detectChanges();
+        this.erroReserva = 'Este presente já foi reservado por outra pessoa.';
         await this.carregar();
-        this.fecharModal();
+        this.cdr.detectChanges();
         return;
       }
     } catch {
