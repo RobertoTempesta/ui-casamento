@@ -57,8 +57,11 @@ export class TokenService {
       if (expSeconds != null && Math.floor(Date.now() / 1000) >= expSeconds) return false;
 
       return true;
-    } catch {
-      // Firestore indisponível ou erro de rede
+    } catch (err) {
+      // Firestore indisponível, erro de rede ou regras; em dev ajuda ver o motivo
+      if (typeof console !== 'undefined' && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+        console.warn('[TokenService] isValidAsync falhou:', err);
+      }
       return false;
     }
   }
