@@ -23,7 +23,21 @@ export class TokenService {
   }
 
   /**
-   * Valida o token no Firestore: existe na collection `tokens` e não está expirado (expiraEm).
+   * Obtém o timestamp de expiração em segundos (Unix).
+   * Aceita número ou Firestore Timestamp ({ seconds, nanoseconds }).
+   */
+  private getExpiraEmSeconds(expiraEm: unknown): number | null {
+    if (expiraEm == null) return null;
+    if (typeof expiraEm === 'number' && !isNaN(expiraEm)) return expiraEm;
+    const ts = expiraEm as { seconds?: number; toMillis?: () => number };
+    if (typeof ts.seconds === 'number') return ts.seconds;
+    if (typeof ts.toMillis === 'function') return Math.floor(ts.toMillis() / 1000);
+    return null;
+  }
+
+  /**
+   * Valida o token no Firestore: existe na collection `tokens`, não está expirado (expiraEm)
+   * e não foi marcado como usado (usado !== true).
    */
   async isValidAsync(token: string): Promise<boolean> {
     const t = token?.trim();
@@ -34,18 +48,19 @@ export class TokenService {
       const col = collection(db, TOKENS_COLLECTION);
       const q = query(col, where('token', '==', t));
       const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        const doc = snapshot.docs[0].data();
-        const expiraEm = doc['expiraEm'];
-        if (expiraEm != null && typeof expiraEm === 'number') {
-          if (Math.floor(Date.now() / 1000) >= expiraEm) return false;
-        }
-        return true;
-      }
+      if (snapshot.empty) return false;
+
+      const doc = snapshot.docs[0].data();
+      if (doc['usado'] === true) return false;
+
+      const expSeconds = this.getExpiraEmSeconds(doc['expiraEm']);
+      if (expSeconds != null && Math.floor(Date.now() / 1000) >= expSeconds) return false;
+
+      return true;
     } catch {
       // Firestore indisponível ou erro de rede
+      return false;
     }
-    return false;
   }
 
   hasValidToken(): boolean {
