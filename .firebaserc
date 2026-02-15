@@ -1,8 +1,1 @@
-{
-  "projects": {
-    "default": "demo-project",
-    "y": "dbcasamento-8a407"
-  },
-  "targets": {},
-  "etags": {}
-}
+{"projects":{"default":"dbcasamento-8a407"},"targets":{},"etags":{}}
